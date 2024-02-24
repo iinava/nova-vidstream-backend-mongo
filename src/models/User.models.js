@@ -96,5 +96,5 @@ userSchema.methods.generaterefreshtoken =  function(){
  }
   )
  }
-
+//hereis nothing
 export const User = mongoose.model("User",userSchema)
