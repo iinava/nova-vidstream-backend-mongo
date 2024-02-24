@@ -1,1 +1,1 @@
-second time
+nova is a video streaming platform built with Node.js, Express, and MongoDB (Mongoose). This backend repository contains the server-side code for managing video content, user authentication, and more.
