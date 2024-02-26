@@ -56,7 +56,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function(next)
 {
     if (this.isModified("password")) return next(); //makes sure password is encrpyted only when password field is modified 
-    this.password=bcrypt.hash(this.password,10)   //bcrypt encryts the password  while saving
+    this.password= await bcrypt.hash(this.password,10)   //bcrypt encryts the password  while saving
     next();
 }
 )
