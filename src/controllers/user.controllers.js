@@ -22,7 +22,7 @@ const registerUser=asyncHandler(async(req,res)=>{
    
   //check wether user aldready exit or not
 
-  const existedUser=User.findOne({
+  const existedUser= await User.findOne({
     $or:[{username},{email}]
   })
   console.log(existedUser,"existeduser");
@@ -35,16 +35,26 @@ const registerUser=asyncHandler(async(req,res)=>{
     //check for images
      
     const avatarlocalpath = req.files?.avatar[0]?.path
-    const coverimagelocalpath = req.files?.coverimage[0]?.path
+    // const coverimagelocalpath = req.files?.coverimage[0]?.path
+
+    let coverimagelocalpath;
+     
+    if (req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length > 0) {
+      coverimagelocalpath=req.files.coverimage[0].path
+    }
+
+
 
     if (!avatarlocalpath) {
-      throw new ApiError(400,"avatar file is mandatory")
+      throw new ApiError(400,"avatar file is mandatory /no path")
       
     }
 
     //upload to cloudinary ,get link
     const avatar = await  uploadOnCloudinary(avatarlocalpath)
     const coverimage = await  uploadOnCloudinary(coverimagelocalpath)
+
+    console.log(avatar,coverimage,"uploaded")
 
     if (!avatar) {
       throw new ApiError(400,"avatar file is mandatory")
@@ -55,12 +65,13 @@ const registerUser=asyncHandler(async(req,res)=>{
    const user =await User.create({
       fullname,
       avatar:avatar.url,
-      coverimage:coverimage.url || "",
+      coverimage:coverimage?.url || "",
       email,
       password,
       username:username.toLowerCase()
 
     })
+  await user.save()   //triggers save => bcrypt
     
     // checking creation + remove password and refresh toke from response 
 
